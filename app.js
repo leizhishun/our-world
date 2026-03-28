@@ -40,16 +40,8 @@ const DB = {
 // ============ 默认数据 ============
 function getDefaultData() {
     return {
-        anniversaries: [
-            { id: 1, title: '在一起纪念日', date: '2023-03-22', type: 'together', repeat: true },
-            { id: 2, title: '我的生日', date: '2000-06-15', type: 'birthday', repeat: true },
-            { id: 3, title: 'TA的生日', date: '2001-08-20', type: 'birthday', repeat: true }
-        ],
-        milestones: [
-            { id: 1, title: '第一次见面', date: '2023-01-15', desc: '在图书馆相遇', icon: '💕' },
-            { id: 2, title: '正式在一起', date: '2023-03-22', desc: '确定了恋爱关系', icon: '❤️' },
-            { id: 3, title: '第一次约会', date: '2023-04-01', desc: '去看电影', icon: '🎬' }
-        ],
+        anniversaries: [],
+        milestones: [],
         diaries: [],
         photos: [],
         classes: [],
@@ -492,9 +484,12 @@ function renderAnniversaries() {
                     <h4>${ann.type === 'birthday' ? '🎂' : '💕'} ${ann.title}</h4>
                     <div class="anniversary-date">${ann.date}</div>
                 </div>
-                <div class="anniversary-countdown">
-                    <div class="countdown-days">${daysLeft}</div>
-                    <div class="countdown-label">天后</div>
+                <div class="anniversary-actions">
+                    <div class="anniversary-countdown">
+                        <div class="countdown-days">${daysLeft}</div>
+                        <div class="countdown-label">天后</div>
+                    </div>
+                    <button class="delete-btn" onclick="deleteAnniversary(${ann.id})" title="删除">✕</button>
                 </div>
             </div>
         `;
@@ -532,6 +527,15 @@ function saveAnniversary() {
     // 清空表单
     document.getElementById('annTitle').value = '';
     document.getElementById('annDate').value = '';
+}
+
+function deleteAnniversary(id) {
+    if (!confirm('确定要删除这个纪念日吗？')) return;
+    DB.anniversaries = DB.anniversaries.filter(a => a.id !== id);
+    saveToCloud();
+    renderAnniversaries();
+    renderReminders();
+    showToast('已删除纪念日');
 }
 
 // ============ 日记 ============
@@ -660,6 +664,7 @@ function renderTimeline() {
         <div class="milestone-item">
             <div class="milestone-dot"></div>
             <div class="milestone-card">
+                <button class="delete-btn milestone-delete" onclick="deleteMilestone(${ms.id})" title="删除">✕</button>
                 <div class="milestone-icon">${ms.icon}</div>
                 <div class="milestone-title">${ms.title}</div>
                 <div class="milestone-date">${ms.date}</div>
@@ -693,6 +698,14 @@ function saveMilestone() {
     document.getElementById('milestoneTitle').value = '';
     document.getElementById('milestoneDate').value = '';
     document.getElementById('milestoneDesc').value = '';
+}
+
+function deleteMilestone(id) {
+    if (!confirm('确定要删除这条里程碑吗？')) return;
+    DB.milestones = DB.milestones.filter(m => m.id !== id);
+    saveToCloud();
+    renderTimeline();
+    showToast('已删除里程碑');
 }
 
 // ============ 课表 ============
