@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💕 我们的情侣空间</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="app">
+        <!-- 导航栏 -->
+        <nav class="navbar">
+            <div class="nav-brand">
+                <img src="assets/images/miffy.png" alt="米菲" class="nav-brand-miffy">
+                <span class="brand-text">我们的空间</span>
+            </div>
+            <!-- 汉堡菜单按钮（手机端显示） -->
+            <div class="nav-hamburger" id="navHamburger" onclick="toggleMobileMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <div class="nav-menu" id="navMenu">
+                <a href="#home" class="nav-item active" data-page="home">🏠 首页</a>
+                <a href="#anniversary" class="nav-item" data-page="anniversary">🎂 纪念日</a>
+                <a href="#diary" class="nav-item" data-page="diary">📝 日记</a>
+                <a href="#gallery" class="nav-item" data-page="gallery">📷 相册</a>
+                <a href="#timeline" class="nav-item" data-page="timeline">📊 时间轴</a>
+                <a href="#schedule" class="nav-item" data-page="schedule">🎓 课表</a>
+                <a href="#calendar" class="nav-item" data-page="calendar">📅 日历</a>
+                <a href="#tasks" class="nav-item" data-page="tasks">✅ 任务</a>
+                <a href="#focus" class="nav-item" data-page="focus">⏱️ 专注</a>
+                <a href="#wishlist" class="nav-item" data-page="wishlist">⭐ 愿望</a>
+                <a href="#checkin" class="nav-item" data-page="checkin">📍 打卡</a>
+                <a href="#favorites" class="nav-item" data-page="favorites">❤️ 收藏</a>
+                <a href="#rewards" class="nav-item" data-page="rewards">🎁 悬赏</a>
+                <a href="#savings" class="nav-item" data-page="savings">💰 小金库</a>
+                <a href="#mood" class="nav-item" data-page="mood">😊 心情</a>
+                <a href="#rant" class="nav-item" data-page="rant">💬 吐槽</a>
+            </div>
+        </nav>
+
+        <!-- 手机端底部导航 -->
+        <nav class="mobile-bottom-nav">
+            <div class="mobile-bottom-nav-inner">
+                <a class="mobile-nav-item active" data-page="home" onclick="navigateTo('home')">
+                    <span class="nav-icon">🏠</span>
+                    <span>首页</span>
+                </a>
+                <a class="mobile-nav-item" data-page="diary" onclick="navigateTo('diary')">
+                    <span class="nav-icon">📝</span>
+                    <span>日记</span>
+                </a>
+                <a class="mobile-nav-item" data-page="tasks" onclick="navigateTo('tasks')">
+                    <span class="nav-icon">✅</span>
+                    <span>任务</span>
+                </a>
+                <a class="mobile-nav-item" data-page="mood" onclick="navigateTo('mood')">
+                    <span class="nav-icon">😊</span>
+                    <span>心情</span>
+                </a>
+                <a class="mobile-nav-item" data-page="rant" onclick="navigateTo('rant')">
+                    <span class="nav-icon">💬</span>
+                    <span>吐槽</span>
+                </a>
+            </div>
+        </nav>
+
+        <!-- 主内容区 -->
+        <main class="main-content">
+            <!-- 首页 -->
+            <section id="home" class="page active">
+                <div class="hero-section">
+                    <div class="hero-content">
+                        <div class="hero-image">
+                            <img src="assets/images/miffy.png" alt="米菲" class="miffy-main">
+                        </div>
+                        <h1 class="hero-title">
+                            <span class="cute-text">我们的</span>
+                            <span class="highlight">甜蜜空间</span>
+                        </h1>
+                        <p class="hero-subtitle">记录每一个美好瞬间</p>
+                        
+                        <!-- 在一起计时卡片 -->
+                        <div class="countdown-card" id="timerCard">
+                            <!-- 未开启状态 -->
+                            <div id="timerNotStarted">
+                                <div class="countdown-title">💕 在一起计时</div>
+                                <div class="timer-prompt">开启后开始记录在一起的每一秒</div>
+                                <div class="timer-display-zero" id="togetherTimer">
+                                    <div class="time-unit">
+                                        <span class="time-value">0</span>
+                                        <span class="time-label">天</span>
+                                    </div>
+                                    <div class="time-unit">
+                                        <span class="time-value">0</span>
+                                        <span class="time-label">小时</span>
+                                    </div>
+                                    <div class="time-unit">
+                                        <span class="time-value">0</span>
+                                        <span class="time-label">分钟</span>
+                                    </div>
+                                    <div class="time-unit">
+                                        <span class="time-value">0</span>
+                                        <span class="time-label">秒</span>
+                                    </div>
+                                </div>
+                                <button class="timer-start-btn" onclick="startTogetherTimer()">💕 开启我们的计时</button>
+                            </div>
+                            <!-- 已开启状态（隐藏，开启后显示） -->
+                            <div id="timerStarted" style="display:none;">
+                                <div class="countdown-title">在一起已经</div>
+                                <div class="countdown-timer" id="togetherTimerActive">
+                                    <div class="time-unit">
+                                        <span class="time-value" id="days">0</span>
+                                        <span class="time-label">天</span>
+                                    </div>
+                                    <div class="time-unit">
+                                        <span class="time-value" id="hours">0</span>
+                                        <span class="time-label">小时</span>
+                                    </div>
+                                    <div class="time-unit">
+                                        <span class="time-value" id="minutes">0</span>
+                                        <span class="time-label">分钟</span>
+                                    </div>
+                                    <div class="time-unit">
+                                        <span class="time-value" id="seconds">0</span>
+                                        <span class="time-label">秒</span>
+                                    </div>
+                                </div>
+                                <div class="timer-start-date" id="timerStartDate"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 快捷入口 -->
+                <div class="quick-access">
+                    <div class="section-title">✨ 快捷功能</div>
+                    <div class="quick-cards">
+                        <div class="quick-card" onclick="navigateTo('anniversary')">
+                            <span class="quick-icon">🎂</span>
+                            <span class="quick-label">纪念日</span>
+                        </div>
+                        <div class="quick-card" onclick="navigateTo('diary')">
+                            <span class="quick-icon">📝</span>
+                            <span class="quick-label">写日记</span>
+                        </div>
+                        <div class="quick-card" onclick="navigateTo('tasks')">
+                            <span class="quick-icon">✅</span>
+                            <span class="quick-label">任务清单</span>
+                        </div>
+                        <div class="quick-card" onclick="navigateTo('mood')">
+                            <span class="quick-icon">😊</span>
+                            <span class="quick-label">今日心情</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 今日提醒 -->
+                <div class="today-reminder">
+                    <div class="section-title">🔔 今日提醒</div>
+                    <div class="reminder-list" id="reminderList">
+                        <div class="reminder-item">
+                            <span class="reminder-icon">💕</span>
+                            <span class="reminder-text">距离下一个纪念日还有 15 天</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 纪念日页面 -->
+            <section id="anniversary" class="page">
+                <div class="page-header">
+                    <h2>🎂 纪念日管理</h2>
+                    <button class="btn-primary" onclick="showAddAnniversary()">+ 添加纪念日</button>
+                </div>
+                
+                <div class="anniversary-list" id="anniversaryList">
+                    <!-- 动态生成 -->
+                </div>
+
+                <!-- 添加纪念日弹窗 -->
+                <div class="modal" id="anniversaryModal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>添加纪念日</h3>
+                            <span class="close" onclick="closeModal('anniversaryModal')">&times;</span>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>标题</label>
+                                <input type="text" id="annTitle" placeholder="例如：在一起纪念日">
+                            </div>
+                            <div class="form-group">
+                                <label>日期</label>
+                                <input type="date" id="annDate">
+                            </div>
+                            <div class="form-group">
+                                <label>类型</label>
+                                <select id="annType">
+                                    <option value="together">在一起纪念日</option>
+                                    <option value="birthday">生日</option>
+                                    <option value="custom">自定义</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>每年重复</label>
+                                <input type="checkbox" id="annRepeat" checked>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn-primary" onclick="saveAnniversary()">保存</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 日记页面 -->
+            <section id="diary" class="page">
+                <div class="page-header">
+                    <h2>📝 共同日记</h2>
+                    <button class="btn-primary" onclick="showAddDiary()">+ 写日记</button>
+                </div>
+
+                <div class="diary-list" id="diaryList">
+                    <!-- 动态生成 -->
+                </div>
+
+                <!-- 添加日记弹窗 -->
+                <div class="modal" id="diaryModal">
+                    <div class="modal-content large">
+                        <div class="modal-header">
+                            <h3>写日记</h3>
+                            <span class="close" onclick="closeModal('diaryModal')">&times;</span>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>日期</label>
+                                <input type="date" id="diaryDate">
+                            </div>
+                            <div class="form-group">
+                                <label>心情</label>
+                                <div class="mood-selector" id="diaryMood">
+                                    <span class="mood-option" data-mood="happy">😄 开心</span>
+                                    <span class="mood-option" data-mood="sad">😢 难过</span>
+                                    <span class="mood-option" data-mood="angry">😠 生气</span>
+                                    <span class="mood-option" data-mood="love">😍 喜欢</span>
+                                    <span class="mood-option" data-mood="surprised">😲 惊讶</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>内容</label>
+                                <textarea id="diaryContent" rows="8" placeholder="写下今天的心情和故事..."></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>标签</label>
+                                <input type="text" id="diaryTags" placeholder="用逗号分隔，例如：日常, 美食">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn-primary" onclick="saveDiary()">保存</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 相册页面 -->
+            <section id="gallery" class="page">
+                <div class="page-header">
+                    <h2>📷 时光相册</h2>
+                    <button class="btn-primary" onclick="showAddPhoto()">+ 添加照片</button>
+                </div>
+
+                <div class="gallery-grid" id="galleryGrid">
+                    <!-- 动态生成 -->
+                </div>
+
+                <!-- 添加照片弹窗 -->
+                <div class="modal" id="photoModal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>添加照片</h3>
+                            <span class="close" onclick="closeModal('photoModal')">&times;</span>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>标题</label>
+                                <input type="text" id="photoTitle" placeholder="给照片起个名字">
+                            </div>
+                            <div class="form-group">
+                                <label>日期</label>
+                                <input type="date" id="photoDate">
+                            </div>
+                            <div class="form-group">
+                                <label>分类</label>
+                                <select id="photoCategory">
+                                    <option value="daily">日常</option>
+                                    <option value="travel">旅行</option>
+                                    <option value="festival">节日</option>
+                                    <option value="special">特别</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>图片URL</label>
+                                <input type="text" id="photoUrl" placeholder="输入图片链接">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn-primary" onclick="savePhoto()">保存</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 时间轴页面 -->
+            <section id="timeline" class="page">
+                <div class="page-header">
+                    <h2>📊 里程碑时间轴</h2>
+                    <button class="btn-primary" onclick="showAddMilestone()">+ 添加里程碑</button>
+                </div>
+
+                <div class="timeline-container" id="timelineContainer">
+                    <!-- 动态生成 -->
+                </div>
+
+                <!-- 添加里程碑弹窗 -->
+                <div class="modal" id="milestoneModal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>添加里程碑</h3>
+                            <span class="close" onclick="closeModal('milestoneModal')">&times;</span>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>标题</label>
+                                <input type="text" id="milestoneTitle" placeholder="例如：第一次见面">
+                            </div>
+                            <div class="form-group">
+                                <label>日期</label>
+                                <input type="date" id="milestoneDate">
+                            </div>
+                            <div class="form-group">
+                                <label>描述</label>
+                                <textarea id="milestoneDesc" rows="3" placeholder="记录这个重要的时刻..."></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>图标</label>
+                                <input type="text" id="milestoneIcon" placeholder="例如：💕" value="💕">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn-primary" onclick="saveMilestone()">保存</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 课表页面 -->
+            <section id="schedule" class="page">
+                <div class="page-header">
+                    <h2>🎓 共享课表</h2>
+                    <button class="btn-primary" onclick="showAddClass()">+ 添加课程</button>
+                </div>
+
+                <div class="schedule-container">
+                    <div class="schedule-tabs">
+                        <button class="tab-btn active" data-person="A">我的课表</button>
+                        <button class="tab-btn" data-person="B">TA的课表</button>
+                        <button class="tab-btn" data-person="both">共同时间</button>
+                    </div>
+                    
+                    <div class="schedule-grid" id="scheduleGrid">
+                        <!-- 动态生成 -->
+                    </div>
+                </div>
+
+                <!-- 添加课程弹窗 -->
+                <div class="modal" id="classModal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>添加课程</h3>
+                            <span class="close" onclick="closeModal('classModal')">&times;</span>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>课程名称</label>
+                                <input type="text" id="className">
+                            </div>
+                            <div class="form-group">
+                                <label>上课时间</label>
+                                <select id="classDay">
+                                    <option value="1">周一</option>
+                                    <option value="2">周二</option>
+                                    <option value="3">周三</option>
+                                    <option value="4">周四</option>
+                                    <option value="5">周五</option>
+                                    <option value="6">周六</option>
+                                    <option value="0">周日</option>
+                                </select>
+                                <select id="classTime">
+                                    <option value="1">第1-2节 (8:00-9:40)</option>
+                                    <option value="2">第3-4节 (10:00-11:40)</option>
+                                    <option value="3">第5-6节 (14:00-15:40)</option>
+                                    <option value="4">第7-8节 (16:00-17:40)</option>
+                                    <option value="5">第9-10节 (19:00-20:40)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>谁的课程</label>
+                                <select id="classPerson">
+                                    <option value="A">我</option>
+                                    <option value="B">TA</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>教室</label>
+                                <input type="text" id="classRoom" placeholder="例如：A101">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn-primary" onclick="saveClass()">保存</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 日历页面 -->
+            <section id="calendar" class="page">
+                <div class="page-header">
+                    <h2>📅 共同日历</h2>
+                    <button class="btn-primary" onclick="showAddEvent()">+ 添加事件</button>
+                </div>
+
+                <div class="calendar-container">
+                    <div class="calendar-header">
+                        <button class="nav-btn" onclick="changeMonth(-1)">◀</button>
+                        <h3 id="calendarMonth">2024年 3月</h3>
+                        <button class="nav-btn" onclick="changeMonth(1)">▶</button>
+                    </div>
+                    <div class="calendar-grid" id="calendarGrid">
+                        <!-- 动态生成 -->
+                    </div>
+                </div>
+
+                <!-- 添加事件弹窗 -->
+                <div class="modal" id="eventModal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>添加事件</h3>
+                            <span class="close" onclick="closeModal('eventModal')">&times;</span>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>事件名称</label>
+                                <input type="text" id="eventName">
+                            </div>
+                            <div class="form-group">
+                                <label>日期</label>
+                                <input type="date" id="eventDate">
+                            </div>
+                            <div class="form-group">
+                                <label>类型</label>
+                                <select id="eventType">
+                                    <option value="date">约会</option>
+                                    <option value="study">学习</option>
+                                    <option value="activity">活动</option>
+                                    <option value="exam">考试</option>
+                                    <option value="holiday">假期</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>备注</label>
+                                <textarea id="eventNote" rows="2"></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn-primary" onclick="saveEvent()">保存</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 任务页面 -->
+            <section id="tasks" class="page">
+                <div class="page-header">
+                    <h2>✅ 任务清单</h2>
+                    <button class="btn-primary" onclick="showAddTask()">+ 添加任务</button>
+                </div>
+
+                <div class="task-filters">
+                    <button class="filter-btn active" data-filter="all">全部</button>
+                    <button class="filter-btn" data-filter="pending">待完成</button>
+                    <button class="filter-btn" data-filter="completed">已完成</button>
+                </div>
+
+                <div class="task-list" id="taskList">
+                    <!-- 动态生成 -->
+                </div>
+
+                <!-- 添加任务弹窗 -->
+                <div class="modal" id="taskModal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>添加任务</h3>
+                            <span class="close" onclick="closeModal('taskModal')">&times;</span>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>任务名称</label>
+                                <input type="text" id="taskTitle">
+                            </div>
+                            <div class="form-group">
+                                <label>截止日期</label>
+                                <input type="date" id="taskDeadline">
+                            </div>
+                            <div class="form-group">
+                                <label>优先级</label>
+                                <select id="taskPriority">
+                                    <option value="low">低</option>
+                                    <option value="medium">中</option>
+                                    <option value="high">高</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>标签</label>
+                                <input type="text" id="taskTags" placeholder="用逗号分隔">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn-primary" onclick="saveTask()">保存</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 专注计时器页面 -->
+            <section id="focus" class="page">
+                <div class="page-header">
+                    <h2>⏱️ 专注计时器</h2>
+                </div>
+
+                <div class="focus-container">
+                    <div class="focus-timer">
+                        <div class="timer-display" id="focusTimer">25:00</div>
+                        <div class="timer-status" id="focusStatus">准备开始</div>
+                    </div>
+
+                    <div class="focus-controls">
+                        <button class="btn-large btn-start" onclick="startFocus()">开始专注</button>
+                        <button class="btn-large btn-pause" onclick="pauseFocus()">暂停</button>
+                        <button class="btn-large btn-reset" onclick="resetFocus()">重置</button>
+                    </div>
+
+                    <div class="focus-stats">
+                        <div class="stat-card">
+                            <div class="stat-value" id="totalFocusTime">0</div>
+                            <div class="stat-label">今日专注分钟</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="totalPomodoros">0</div>
+                            <div class="stat-label">完成的番茄钟</div>
+                        </div>
+                    </div>
+
+                    <div class="focus-history" id="focusHistory">
+                        <h4>今日记录</h4>
+                        <div class="history-list">
+                            <div class="history-item">
+                                <span>14:00-14:25</span>
+                                <span>✅ 完成</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 愿望清单页面 -->
+            <section id="wishlist" class="page">
+                <div class="page-header">
+                    <h2>⭐ 愿望清单</h2>
+                    <button class="btn-primary" onclick="showAddWish()">+ 添加愿望</button>
+                </div>
+
+                <div class="wish-list" id="wishList">
+                    <!-- 动态生成 -->
+                </div>
+
+                <!-- 添加愿望弹窗 -->
+                <div class="modal" id="wishModal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>添加愿望</h3>
+                            <span class="close" onclick="closeModal('wishModal')">&times;</span>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>愿望内容</label>
+                                <input type="text" id="wishContent" placeholder="例如：一起去迪士尼">
+                            </div>
+                            <div class="form-group">
+                                <label>分类</label>
+                                <select id="wishCategory">
+                                    <option value="restaurant">餐厅</option>
+                                    <option value="movie">电影</option>
+                                    <option value="travel">旅行</option>
+                                    <option value="gift">礼物</option>
+                                    <option value="other">其他</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>难度</label>
+                                <select id="wishDifficulty">
+                                    <option value="easy">简单 ⭐</option>
+                                    <option value="medium">中等 ⭐⭐</option>
+                                    <option value="hard">困难 ⭐⭐⭐</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn-primary" onclick="saveWish()">保存</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 小金库页面 -->
+            <section id="savings" class="page">
+                <div class="page-header">
+                    <h2>💰 小金库</h2>
+                    <button class="btn-primary" onclick="showAddSavings()">+ 存入</button>
+                </div>
+
+                <div class="savings-overview">
+                    <div class="piggy-bank">
+                        <div class="pig-icon">🐷</div>
+                        <div class="savings-amount" id="totalSavings">¥0</div>
+                        <div class="savings-progress">
+                            <div class="progress-bar" id="savingsProgress">
+                                <div class="progress-fill" style="width: 0%"></div>
+                            </div>
+                            <div class="progress-text">
+                                <span>目标: ¥<span id="savingsGoal">5000</span></span>
+                                <span id="savingsPercent">0%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="savings-history">
+                    <h4>存入记录</h4>
+                    <div class="history-list" id="savingsHistory">
+                        <!-- 动态生成 -->
+                    </div>
+                </div>
+
+                <!-- 存入弹窗 -->
+                <div class="modal" id="savingsModal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>存入小金库</h3>
+                            <span class="close" onclick="closeModal('savingsModal')">&times;</span>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>金额</label>
+                                <input type="number" id="savingsAmount" placeholder="输入金额">
+                            </div>
+                            <div class="form-group">
+                                <label>备注</label>
+                                <input type="text" id="savingsNote" placeholder="例如：旅游基金">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn-primary" onclick="saveSavings()">存入</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 心情页面 -->
+            <section id="mood" class="page">
+                <div class="page-header">
+                    <h2>😊 今日心情</h2>
+                </div>
+
+                <div class="mood-selector-container">
+                    <div class="mood-calendar" id="moodCalendar">
+                        <!-- 动态生成 -->
+                    </div>
+                    
+                    <div class="today-mood">
+                        <h4>今天的心情</h4>
+                        <div class="mood-options">
+                            <div class="mood-option-large" data-mood="happy" onclick="selectMood('happy')">
+                                <span class="mood-emoji">😄</span>
+                                <span class="mood-label">开心</span>
+                            </div>
+                            <div class="mood-option-large" data-mood="sad" onclick="selectMood('sad')">
+                                <span class="mood-emoji">😢</span>
+                                <span class="mood-label">难过</span>
+                            </div>
+                            <div class="mood-option-large" data-mood="angry" onclick="selectMood('angry')">
+                                <span class="mood-emoji">😠</span>
+                                <span class="mood-label">生气</span>
+                            </div>
+                            <div class="mood-option-large" data-mood="love" onclick="selectMood('love')">
+                                <span class="mood-emoji">😍</span>
+                                <span class="mood-label">喜欢</span>
+                            </div>
+                            <div class="mood-option-large" data-mood="excited" onclick="selectMood('excited')">
+                                <span class="mood-emoji">🤩</span>
+                                <span class="mood-label">兴奋</span>
+                            </div>
+                            <div class="mood-option-large" data-mood="calm" onclick="selectMood('calm')">
+                                <span class="mood-emoji">😌</span>
+                                <span class="mood-label">平静</span>
+                            </div>
+                            <div class="mood-option-large" data-mood="tired" onclick="selectMood('tired')">
+                                <span class="mood-emoji">😴</span>
+                                <span class="mood-label">疲惫</span>
+                            </div>
+                            <div class="mood-option-large" data-mood="stressed" onclick="selectMood('stressed')">
+                                <span class="mood-emoji">😰</span>
+                                <span class="mood-label">压力</span>
+                            </div>
+                        </div>
+                        
+                        <div class="mood-note">
+                            <textarea id="moodNote" rows="3" placeholder="写下今天的心情..."></textarea>
+                            <button class="btn-primary" onclick="saveMood()">记录心情</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 吐槽空间页面 -->
+            <section id="rant" class="page">
+                <div class="page-header">
+                    <h2>💬 吐槽空间</h2>
+                    <button class="btn-primary" onclick="showAddRant()">+ 发布吐槽</button>
+                </div>
+
+                <div class="rant-notice">
+                    <span class="rant-notice-icon">🐰</span>
+                    <p>这里是你们的小树洞，互相吐槽、发牢骚都OK，说出来就好啦～</p>
+                </div>
+
+                <!-- 筛选标签 -->
+                <div class="rant-filters">
+                    <button class="rant-filter-btn active" data-filter="all" onclick="filterRants('all', this)">全部</button>
+                    <button class="rant-filter-btn" data-filter="me" onclick="filterRants('me', this)">我的吐槽</button>
+                    <button class="rant-filter-btn" data-filter="partner" onclick="filterRants('partner', this)">TA的吐槽</button>
+                    <button class="rant-filter-btn" data-filter="resolved" onclick="filterRants('resolved', this)">已解决</button>
+                </div>
+
+                <!-- 吐槽列表 -->
+                <div class="rant-list" id="rantList">
+                    <!-- 动态生成 -->
+                </div>
+
+                <!-- 发布吐槽弹窗 -->
+                <div class="modal" id="rantModal">
+                    <div class="modal-content large">
+                        <div class="modal-header">
+                            <h3>💬 发布吐槽</h3>
+                            <span class="close" onclick="closeModal('rantModal')">&times;</span>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>吐槽对象</label>
+                                <div class="rant-target-selector">
+                                    <button class="rant-target-btn active" data-target="self" onclick="selectRantTarget('self', this)">😤 自言自语</button>
+                                    <button class="rant-target-btn" data-target="partner" onclick="selectRantTarget('partner', this)">💌 给TA看</button>
+                                    <button class="rant-target-btn" data-target="anonymous" onclick="selectRantTarget('anonymous', this)">🙈 匿名吐槽</button>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>吐槽类型</label>
+                                <select id="rantType">
+                                    <option value="daily">😤 日常碎碎念</option>
+                                    <option value="love">💕 爱的抱怨</option>
+                                    <option value="study">📚 学习压力</option>
+                                    <option value="funny">😂 搞笑槽点</option>
+                                    <option value="serious">🤔 认真说个事</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>吐槽内容</label>
+                                <textarea id="rantContent" rows="6" placeholder="说吧，这里没人评判你～ 憋在心里难受，说出来就好了！"></textarea>
+                                <div class="rant-emoji-quick">
+                                    <span onclick="addEmoji('😤')">😤</span>
+                                    <span onclick="addEmoji('🤬')">🤬</span>
+                                    <span onclick="addEmoji('😭')">😭</span>
+                                    <span onclick="addEmoji('🙄')">🙄</span>
+                                    <span onclick="addEmoji('😅')">😅</span>
+                                    <span onclick="addEmoji('💢')">💢</span>
+                                    <span onclick="addEmoji('😩')">😩</span>
+                                    <span onclick="addEmoji('🤷')">🤷</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>心情指数</label>
+                                <div class="rant-mood-slider">
+                                    <span>😡</span>
+                                    <input type="range" id="rantMoodLevel" min="1" max="5" value="3">
+                                    <span>😊</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn-secondary" onclick="closeModal('rantModal')">再想想</button>
+                            <button class="btn-primary" onclick="saveRant()">说出来！</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 回复弹窗 -->
+                <div class="modal" id="rantReplyModal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>💌 回应TA</h3>
+                            <span class="close" onclick="closeModal('rantReplyModal')">&times;</span>
+                        </div>
+                        <div class="modal-body">
+                            <div class="rant-original" id="rantReplyOriginal"></div>
+                            <div class="form-group">
+                                <label>你的回应</label>
+                                <textarea id="rantReplyContent" rows="4" placeholder="好好回应一下吧～"></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn-primary" onclick="saveRantReply()">发送回应</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 约会打卡页面 -->
+            <section id="checkin" class="page">
+                <div class="page-header">
+                    <h2>📍 约会打卡</h2>
+                    <button class="btn-primary" onclick="showAddCheckin()">+ 打卡</button>
+                </div>
+
+                <div class="checkin-map">
+                    <div class="map-placeholder">
+                        <span class="map-icon">🗺️</span>
+                        <p>足迹地图</p>
+                    </div>
+                </div>
+
+                <div class="checkin-list" id="checkinList">
+                    <!-- 动态生成 -->
+                </div>
+
+                <!-- 添加打卡弹窗 -->
+                <div class="modal" id="checkinModal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>📍 约会打卡</h3>
+                            <span class="close" onclick="closeModal('checkinModal')">&times;</span>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>地点名称</label>
+                                <input type="text" id="checkinLocation" placeholder="例如：星巴克">
+                            </div>
+                            <div class="form-group">
+                                <label>日期</label>
+                                <input type="date" id="checkinDate">
+                            </div>
+                            <div class="form-group">
+                                <label>类型</label>
+                                <select id="checkinType">
+                                    <option value="restaurant">餐厅</option>
+                                    <option value="park">公园</option>
+                                    <option value="movie">电影院</option>
+                                    <option value="shopping">商场</option>
+                                    <option value="travel">旅行地</option>
+                                    <option value="other">其他</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>照片URL</label>
+                                <input type="text" id="checkinPhoto" placeholder="添加照片链接">
+                            </div>
+                            <div class="form-group">
+                                <label>备注</label>
+                                <textarea id="checkinNote" rows="3" placeholder="记录这次约会..."></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn-primary" onclick="saveCheckin()">打卡</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 推荐收藏页面 -->
+            <section id="favorites" class="page">
+                <div class="page-header">
+                    <h2>❤️ 推荐收藏</h2>
+                    <button class="btn-primary" onclick="showAddFavorite()">+ 添加收藏</button>
+                </div>
+
+                <div class="favorites-list" id="favoritesList">
+                    <!-- 动态生成 -->
+                </div>
+
+                <!-- 添加收藏弹窗 -->
+                <div class="modal" id="favoriteModal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>❤️ 添加收藏</h3>
+                            <span class="close" onclick="closeModal('favoriteModal')">&times;</span>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>名称</label>
+                                <input type="text" id="favoriteName" placeholder="例如：那家很好吃的火锅店">
+                            </div>
+                            <div class="form-group">
+                                <label>分类</label>
+                                <select id="favoriteCategory">
+                                    <option value="restaurant">餐厅</option>
+                                    <option value="shop">店铺</option>
+                                    <option value="movie">电影</option>
+                                    <option value="book">书籍</option>
+                                    <option value="music">音乐</option>
+                                    <option value="other">其他</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>推荐理由</label>
+                                <textarea id="favoriteReason" rows="3" placeholder="为什么推荐这个？"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>评分</label>
+                                <select id="favoriteRating">
+                                    <option value="5">⭐⭐⭐⭐⭐ 非常推荐</option>
+                                    <option value="4">⭐⭐⭐⭐ 推荐</option>
+                                    <option value="3">⭐⭐⭐ 一般</option>
+                                    <option value="2">⭐⭐ 不太推荐</option>
+                                    <option value="1">⭐ 不推荐</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn-primary" onclick="saveFavorite()">保存</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 心愿悬赏页面 -->
+            <section id="rewards" class="page">
+                <div class="page-header">
+                    <h2>🎁 心愿悬赏</h2>
+                    <button class="btn-primary" onclick="showAddReward()">+ 发布悬赏</button>
+                </div>
+
+                <div class="rewards-list" id="rewardsList">
+                    <!-- 动态生成 -->
+                </div>
+
+                <!-- 添加悬赏弹窗 -->
+                <div class="modal" id="rewardModal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>🎁 发布悬赏</h3>
+                            <span class="close" onclick="closeModal('rewardModal')">&times;</span>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>任务内容</label>
+                                <input type="text" id="rewardTask" placeholder="例如：帮我修电脑">
+                            </div>
+                            <div class="form-group">
+                                <label>难度</label>
+                                <select id="rewardDifficulty">
+                                    <option value="easy">简单</option>
+                                    <option value="medium">中等</option>
+                                    <option value="hard">困难</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>悬赏奖励</label>
+                                <input type="text" id="rewardPrize" placeholder="例如：请喝奶茶">
+                            </div>
+                            <div class="form-group">
+                                <label>截止日期</label>
+                                <input type="date" id="rewardDeadline">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn-primary" onclick="saveReward()">发布</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Bmob 后端云 SDK -->
+    <script src="https://unpkg.com/bmob@latest/dist/bmob.js"></script>
+    <!-- Bmob 实时数据同步 -->
+    <script src="https://cdn.jsdelivr.net/gh/nicenemo/bmob-js-sdk/bmobSocketIo.js"></script>
+    <!-- Bmob 配置 -->
+    <script src="bmob-config.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
