@@ -610,6 +610,35 @@ body {
     transform: translateY(-2px);
 }
 
+/* 纪念日右侧操作区 */
+.anniversary-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+/* 通用删除按钮 */
+.delete-btn {
+    width: 28px;
+    height: 28px;
+    border: none;
+    border-radius: 50%;
+    background: #f5f5f5;
+    color: #999;
+    font-size: 0.8rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.delete-btn:hover {
+    background: #ffe0e0;
+    color: #e74c3c;
+}
+
 .anniversary-info h4 {
     font-size: 1.25rem;
     color: var(--text-primary);
@@ -793,6 +822,20 @@ body {
     border-radius: var(--radius-lg);
     padding: var(--space-lg);
     box-shadow: var(--shadow-sm);
+    position: relative;
+}
+
+/* 时间轴删除按钮 */
+.milestone-delete {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.milestone-card:hover .milestone-delete {
+    opacity: 1;
 }
 
 .milestone-icon {
