@@ -72,6 +72,7 @@ async function loadFromCloud() {
         query.equalTo('dataKey', DATA_KEY);
         query.limit(1);
         const results = await query.find();
+        console.log('☁️ Bmob查询结果:', results);
 
         if (results.length > 0) {
             const cloudData = results[0].jsonData;
@@ -81,10 +82,13 @@ async function loadFromCloud() {
                 savedObjectId = results[0].objectId;
                 localStorage.setItem('bmob_object_id', savedObjectId);
                 appState.cloudReady = true;
-                console.log('☁️ 数据从云端加载成功');
+                console.log('☁️ 数据从云端加载成功，记录数:', Object.keys(JSON.parse(cloudData)).length);
+                showToast('☁️ 云端数据加载成功');
                 return;
             }
         }
+
+        console.log('☁️ 云端无数据');
 
         // 云端无数据，检查本地是否有缓存
         const localData = localStorage.getItem('coupleAppData');
@@ -130,7 +134,9 @@ function saveToCloud() {
                     return obj.save();
                 }).then(() => {
                     appState.lastSyncTime = new Date();
-                    console.log('☁️ 数据已同步到云端');
+                    appState.cloudReady = true;
+                    console.log('☁️ 数据已同步到云端，objectId:', savedObjectId);
+                    showToast('☁️ 已保存到云端');
                 }).catch(err => {
                     // objectId 失效（比如云端被清除），重新创建
                     console.warn('⚠️ 更新失败，重新创建:', err.message);
@@ -161,6 +167,7 @@ function createNewRecord(jsonData) {
         console.log('☁️ 数据已同步到云端（新建）');
     }).catch(err => {
         console.warn('⚠️ 云端创建失败:', err.message);
+        showToast('⚠️ 云端保存失败，请检查网络');
     });
 }
 
