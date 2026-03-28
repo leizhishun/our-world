@@ -59,30 +59,51 @@ function getDefaultData() {
     };
 }
 
-// ============ Bmob 云端同步 ============
-const DATA_KEY = 'main';  // 数据标识字段
+// ============ Bmob 云端同步（REST API，无需 SDK） ============
+const DATA_KEY = 'main';
 
-// 保存的 objectId（首次创建后缓存，后续直接更新）
+// Bmob REST API 配置（从 bmob-config.js 读取）
+let BM_CONFIG = {};
+try {
+    // bmob-config.js 里执行了 Bmob.initialize(appId, restKey)
+    // 我们需要从那里获取 appId 和 restKey
+    // 改为直接在 bmob-config.js 里暴露配置
+} catch(e) {}
+
+// 保存的 objectId
 let savedObjectId = localStorage.getItem('bmob_object_id') || null;
+
+// REST API 基础地址
+const BM_API = 'https://api2.bmob.cn/1';
+
+// 获取请求头
+function bmHeaders() {
+    return {
+        'Content-Type': 'application/json',
+        'X-Bmob-Application-Id': BM_APP_ID,
+        'X-Bmob-REST-API-Key': BM_REST_KEY
+    };
+}
 
 // 初始化数据
 async function loadFromCloud() {
     try {
-        const query = Bmob.Query(BM_TABLE.APP_DATA);
-        query.equalTo('dataKey', DATA_KEY);
-        query.limit(1);
-        const results = await query.find();
-        console.log('☁️ Bmob查询结果:', results);
+        const resp = await fetch(`${BM_API}/classes/${BM_TABLE.APP_DATA}?where=${encodeURIComponent(JSON.stringify({dataKey: DATA_KEY}))}&limit=1`, {
+            headers: bmHeaders()
+        });
+        const result = await resp.json();
+        console.log('☁️ Bmob查询结果:', result);
 
-        if (results.length > 0) {
-            const cloudData = results[0].jsonData;
-            if (cloudData) {
+        if (result.results && result.results.length > 0) {
+            const record = result.results[0];
+            if (record.jsonData) {
+                const cloudData = typeof record.jsonData === 'string' ? record.jsonData : JSON.stringify(record.jsonData);
                 Object.assign(DB, JSON.parse(cloudData));
                 localStorage.setItem('coupleAppData', cloudData);
-                savedObjectId = results[0].objectId;
+                savedObjectId = record.objectId;
                 localStorage.setItem('bmob_object_id', savedObjectId);
                 appState.cloudReady = true;
-                console.log('☁️ 数据从云端加载成功，记录数:', Object.keys(JSON.parse(cloudData)).length);
+                console.log('☁️ 数据从云端加载成功');
                 showToast('☁️ 云端数据加载成功');
                 return;
             }
@@ -127,28 +148,31 @@ function saveToCloud() {
 
             if (savedObjectId) {
                 // 更新已有记录
-                const query = Bmob.Query(BM_TABLE.APP_DATA);
-                query.get(savedObjectId).then(obj => {
-                    obj.set('jsonData', jsonData);
-                    obj.set('updatedAt', new Date().toISOString());
-                    return obj.save();
-                }).then(() => {
+                const resp = await fetch(`${BM_API}/classes/${BM_TABLE.APP_DATA}/${savedObjectId}`, {
+                    method: 'PUT',
+                    headers: bmHeaders(),
+                    body: JSON.stringify({ jsonData: jsonData, updatedAt: new Date().toISOString() })
+                });
+                if (resp.ok) {
                     appState.lastSyncTime = new Date();
                     appState.cloudReady = true;
                     console.log('☁️ 数据已同步到云端，objectId:', savedObjectId);
-                    showToast('☁️ 已保存到云端');
-                }).catch(err => {
-                    // objectId 失效（比如云端被清除），重新创建
-                    console.warn('⚠️ 更新失败，重新创建:', err.message);
-                    savedObjectId = null;
-                    localStorage.removeItem('bmob_object_id');
-                    createNewRecord(jsonData);
-                });
+                } else {
+                    throw new Error('更新失败: ' + resp.status);
+                }
             } else {
-                createNewRecord(jsonData);
+                await createNewRecord(jsonData);
             }
         } catch (err) {
             console.warn('⚠️ 云端保存失败:', err.message);
+            if (err.message.includes('更新失败') || err.message.includes('404')) {
+                // objectId 失效，重新创建
+                console.warn('⚠️ objectId失效，重新创建');
+                savedObjectId = null;
+                localStorage.removeItem('bmob_object_id');
+                const jsonData = JSON.stringify(DB);
+                await createNewRecord(jsonData);
+            }
         } finally {
             appState.isSaving = false;
         }
@@ -156,61 +180,51 @@ function saveToCloud() {
 }
 
 // 创建新云端记录
-function createNewRecord(jsonData) {
-    const query = Bmob.Query(BM_TABLE.APP_DATA);
-    query.set('dataKey', DATA_KEY);
-    query.set('jsonData', jsonData);
-    query.save().then(res => {
-        savedObjectId = res.objectId;
-        localStorage.setItem('bmob_object_id', savedObjectId);
-        appState.lastSyncTime = new Date();
-        console.log('☁️ 数据已同步到云端（新建）');
-    }).catch(err => {
-        console.warn('⚠️ 云端创建失败:', err.message);
-        showToast('⚠️ 云端保存失败，请检查网络');
-    });
-}
-
-// 监听云端数据变化（实时同步）
-function startCloudSync() {
+async function createNewRecord(jsonData) {
     try {
-        // 订阅表更新事件
-        BmobSocketIo.updateTable(BM_TABLE.APP_DATA);
-
-        // 监听表中任何行的更新
-        BmobSocketIo.onUpdateTable = function(tablename, data) {
-            console.log('📡 收到实时同步事件:', tablename, data);
-            if (tablename === BM_TABLE.APP_DATA) {
-                // 从云端重新拉取完整数据
-                refreshFromCloud();
-            }
-        };
-
-        console.log('🌐 实时同步已开启');
+        const resp = await fetch(`${BM_API}/classes/${BM_TABLE.APP_DATA}`, {
+            method: 'POST',
+            headers: bmHeaders(),
+            body: JSON.stringify({ dataKey: DATA_KEY, jsonData: jsonData })
+        });
+        const result = await resp.json();
+        if (result.objectId) {
+            savedObjectId = result.objectId;
+            localStorage.setItem('bmob_object_id', savedObjectId);
+            appState.lastSyncTime = new Date();
+            appState.cloudReady = true;
+            console.log('☁️ 数据已同步到云端（新建），objectId:', result.objectId);
+        } else {
+            console.warn('⚠️ 云端创建异常:', result);
+        }
     } catch (err) {
-        console.warn('⚠️ 实时同步功能不可用:', err.message);
+        console.warn('⚠️ 云端创建失败:', err.message);
     }
 }
 
 // 从云端刷新数据
 async function refreshFromCloud() {
     try {
-        const query = Bmob.Query(BM_TABLE.APP_DATA);
-        query.equalTo('dataKey', DATA_KEY);
-        query.limit(1);
-        const results = await query.find();
+        const resp = await fetch(`${BM_API}/classes/${BM_TABLE.APP_DATA}?where=${encodeURIComponent(JSON.stringify({dataKey: DATA_KEY}))}&limit=1`, {
+            headers: bmHeaders()
+        });
+        const result = await resp.json();
 
-        if (results.length > 0) {
-            const cloudData = results[0].jsonData;
-            if (cloudData) {
+        if (result.results && result.results.length > 0) {
+            const record = result.results[0];
+            if (record.jsonData) {
+                const cloudData = typeof record.jsonData === 'string' ? record.jsonData : JSON.stringify(record.jsonData);
                 const parsed = JSON.parse(cloudData);
-                Object.assign(DB, parsed);
-                localStorage.setItem('coupleAppData', cloudData);
-                savedObjectId = results[0].objectId;
-                localStorage.setItem('bmob_object_id', savedObjectId);
-                renderAllSections();
-                console.log('🔄 数据已从云端刷新');
-                showToast('TA更新了数据，已自动刷新~');
+                // 检查是否有变化
+                if (JSON.stringify(DB) !== cloudData) {
+                    Object.assign(DB, parsed);
+                    localStorage.setItem('coupleAppData', cloudData);
+                    savedObjectId = record.objectId;
+                    localStorage.setItem('bmob_object_id', savedObjectId);
+                    renderAllSections();
+                    console.log('🔄 数据已从云端刷新');
+                    showToast('TA更新了数据，已自动刷新~');
+                }
             }
         }
     } catch (err) {
@@ -244,11 +258,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     initDateInputs();
     initFocusTimer();
 
-    // 开启实时同步
-    startCloudSync();
-
-    // 定时从云端刷新数据（每30秒），作为实时同步的兜底
-    setInterval(refreshFromCloud, 30000);
+    // 开启定时从云端刷新数据（每15秒），实现跨设备同步
+    setInterval(refreshFromCloud, 15000);
 
     // 恢复显示
     document.body.style.opacity = '1';
