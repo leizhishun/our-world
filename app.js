@@ -172,31 +172,42 @@ function startCloudSync() {
 
         // 监听表中任何行的更新
         BmobSocketIo.onUpdateTable = function(tablename, data) {
-            if (tablename === BM_TABLE.APP_DATA && data && data.jsonData) {
-                const newData = data.jsonData;
-                if (typeof newData === 'string' ? newData : JSON.stringify(newData)) {
-                    const jsonStr = typeof newData === 'string' ? newData : JSON.stringify(newData);
-                    // 检查是否有变化
-                    if (JSON.stringify(DB) !== jsonStr) {
-                        const parsed = typeof newData === 'string' ? JSON.parse(newData) : newData;
-                        Object.assign(DB, parsed);
-                        localStorage.setItem('coupleAppData', jsonStr);
-                        // 更新 objectId
-                        if (data.objectId) {
-                            savedObjectId = data.objectId;
-                            localStorage.setItem('bmob_object_id', savedObjectId);
-                        }
-                        renderAllSections();
-                        console.log('🔄 检测到TA更新了数据，已自动刷新');
-                        showToast('TA更新了数据，已自动刷新~');
-                    }
-                }
+            console.log('📡 收到实时同步事件:', tablename, data);
+            if (tablename === BM_TABLE.APP_DATA) {
+                // 从云端重新拉取完整数据
+                refreshFromCloud();
             }
         };
 
         console.log('🌐 实时同步已开启');
     } catch (err) {
         console.warn('⚠️ 实时同步功能不可用:', err.message);
+    }
+}
+
+// 从云端刷新数据
+async function refreshFromCloud() {
+    try {
+        const query = Bmob.Query(BM_TABLE.APP_DATA);
+        query.equalTo('dataKey', DATA_KEY);
+        query.limit(1);
+        const results = await query.find();
+
+        if (results.length > 0) {
+            const cloudData = results[0].jsonData;
+            if (cloudData) {
+                const parsed = JSON.parse(cloudData);
+                Object.assign(DB, parsed);
+                localStorage.setItem('coupleAppData', cloudData);
+                savedObjectId = results[0].objectId;
+                localStorage.setItem('bmob_object_id', savedObjectId);
+                renderAllSections();
+                console.log('🔄 数据已从云端刷新');
+                showToast('TA更新了数据，已自动刷新~');
+            }
+        }
+    } catch (err) {
+        console.warn('⚠️ 刷新失败:', err.message);
     }
 }
 
@@ -228,6 +239,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // 开启实时同步
     startCloudSync();
+
+    // 定时从云端刷新数据（每30秒），作为实时同步的兜底
+    setInterval(refreshFromCloud, 30000);
 
     // 恢复显示
     document.body.style.opacity = '1';
